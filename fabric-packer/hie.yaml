@@ -1,0 +1,6 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "fabric-packer:lib"
+    - path: "./app"
+      component: "fabric-packer:exe:fabric-packer"

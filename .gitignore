@@ -1,0 +1,6 @@
+.DS_Store
+fabric-packer/.stack-work/
+fabric-packer/*.log
+fabric-packer/report.txt
+fabric-packer/layout.png
+fabric-packer/fabric-packer.json
