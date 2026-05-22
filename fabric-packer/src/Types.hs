@@ -53,8 +53,9 @@ data Layout = Layout
 -- Config & errors
 
 data AppConfig = AppConfig
-  { cfgReportPath :: FilePath   -- путь для сохранения отчёта
-  , cfgLogFile    :: FilePath   -- путь к файлу логов
+  { cfgReportPath  :: FilePath      -- путь для сохранения отчёта
+  , cfgLogFile     :: FilePath      -- путь к файлу логов
+  , cfgFabricWidth :: Maybe Double  -- ширина ткани по умолчанию, см
   } deriving (Show, Eq, Generic)
 
 instance FromJSON AppConfig

@@ -14,8 +14,9 @@ configPath = "fabric-packer.json"
 
 defaultConfig :: AppConfig
 defaultConfig = AppConfig
-  { cfgReportPath = "report.txt"
-  , cfgLogFile    = "app.log"
+  { cfgReportPath  = "report.txt"
+  , cfgLogFile     = "app.log"
+  , cfgFabricWidth = Nothing
   }
 
 loadConfig :: IO (Either AppError AppConfig)

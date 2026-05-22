@@ -3,7 +3,7 @@ module Input.CLI
   ) where
 
 import Types
-import Config (saveConfig)
+import Config (loadConfig, saveConfig)
 import Output (printLayout, printPiecesInfo, printError, writeReport)
 import Render (renderLayout)
 import Parse.Image (loadPieces, scalePieces)
@@ -144,13 +144,22 @@ runAction SaveImage st =
       recordEvent Info "Изображение расклада сохранено: layout.png" st
 
 runAction LoadConfig st = do
-  putStrLn "Конфиг загружен из fabric-packer.json"
-  recordEvent Info "Конфиг загружен" st
+  result <- loadConfig
+  case result of
+    Left err  -> recordError err st
+    Right cfg -> do
+      let st' = st { stConfig = cfg, stFabricWidth = cfgFabricWidth cfg }
+      let msg = case cfgFabricWidth cfg of
+                  Nothing -> "Конфиг загружен (ширина ткани не задана)"
+                  Just w  -> "Конфиг загружен, ширина ткани: " ++ showCm w ++ " см"
+      putStrLn msg
+      recordEvent Info msg st'
 
 runAction SaveConfig st = do
-  saveConfig (stConfig st)
+  let cfg = (stConfig st) { cfgFabricWidth = stFabricWidth st }
+  saveConfig cfg
   putStrLn "Конфиг сохранён."
-  recordEvent Info "Конфиг сохранён" st
+  recordEvent Info ("Конфиг сохранён" ++ maybe "" (\w -> ", ширина ткани: " ++ showCm w ++ " см") (stFabricWidth st)) st
 
 runAction Quit st = return st
 
@@ -163,7 +172,8 @@ showMenu = do
   putStrLn "  3. Рассчитать расклад"
   putStrLn "  4. Сохранить отчёт"
   putStrLn "  5. Сохранить изображение расклада (PNG)"
-  putStrLn "  6. Сохранить конфиг"
+  putStrLn "  6. Загрузить конфиг"
+  putStrLn "  7. Сохранить конфиг"
   putStrLn "  0. Выход"
 
 readUserAction :: IO UserAction
@@ -175,7 +185,8 @@ readUserAction = do
     3 -> return RunPacking
     4 -> return SaveReport
     5 -> return SaveImage
-    6 -> return SaveConfig
+    6 -> return LoadConfig
+    7 -> return SaveConfig
     0 -> return Quit
     _ -> putStrLn "Неверный выбор, попробуйте снова." >> readUserAction
 
